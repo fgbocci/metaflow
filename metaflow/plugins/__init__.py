@@ -19,6 +19,7 @@ from .environment_decorator import EnvironmentDecorator
 from .retry_decorator import RetryDecorator
 from .aws.batch.batch_decorator import BatchDecorator, ResourcesDecorator
 from .conda.conda_step_decorator import CondaStepDecorator
+from .voyager.voyager_step_decorator import VoyagerStepDecorator
 
 STEP_DECORATORS = [CatchDecorator,
                    TimeoutDecorator,
@@ -26,7 +27,8 @@ STEP_DECORATORS = [CatchDecorator,
                    ResourcesDecorator,
                    RetryDecorator,
                    BatchDecorator,
-                   CondaStepDecorator]
+                   CondaStepDecorator,
+                   VoyagerStepDecorator]
 
 # Add Conda environment
 from .conda.conda_environment import CondaEnvironment
