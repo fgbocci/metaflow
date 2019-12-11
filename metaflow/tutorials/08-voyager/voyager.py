@@ -1,4 +1,4 @@
-from metaflow import FlowSpec, step, voyager, get_metadata
+from metaflow import FlowSpec, step, etl
 
 
 class HelloVoyager(FlowSpec):
@@ -8,7 +8,7 @@ class HelloVoyager(FlowSpec):
     Run this flow to validate that Metaflow is installed correctly.
 
     """
-    @voyager
+
     @step
     def start(self):
         """
@@ -19,20 +19,20 @@ class HelloVoyager(FlowSpec):
         print("HelloFlow is starting.")
         self.next(self.run_etl)
 
-    @voyager
+    @etl(
+        step={
+            "branch": "develop",
+            "type": "etl",
+            "version": "MLA",
+            "parameters": {"FOO": "BAR"},
+        }
+    )
     @step
     def run_etl(self):
         """
         A step for metaflow to introduce itself.
 
         """
-        pipeline = {
-            "branch": "develop",
-            "type": "etl",
-            "version": "MLA",
-            "parameters": {"FOO": "BAR"}
-        }
-
         self.next(self.end)
 
     @step
@@ -45,5 +45,5 @@ class HelloVoyager(FlowSpec):
         print("HelloFlow is all done.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     HelloVoyager()
