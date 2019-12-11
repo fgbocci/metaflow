@@ -29,26 +29,23 @@ class VoyagerStepDecorator(StepDecorator):
 
     name = "voyager"
 
-    def task_pre_step(self,
-                      step_name,
-                      datastore,
-                      metadata,
-                      run_id,
-                      task_id,
-                      flow,
-                      graph,
-                      retry_count,
-                      max_user_code_retries):
+    def task_pre_step(
+        self,
+        step_name,
+        datastore,
+        metadata,
+        run_id,
+        task_id,
+        flow,
+        graph,
+        retry_count,
+        max_user_code_retries,
+    ):
         """
         Run before the step function in the task context.
         """
         print("LA CONCHA DE TU MADRE ALL BOYS")
 
-    def task_decorate(self,
-                      step_func,
-                      flow,
-                      graph,
-                      retry_count,
-                      max_user_code_retries):
+    def task_decorate(self, step_func, flow, graph, retry_count, max_user_code_retries):
         print(self)
         return step_func
