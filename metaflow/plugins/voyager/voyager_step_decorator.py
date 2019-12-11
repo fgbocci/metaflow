@@ -1,33 +1,26 @@
 from metaflow.decorators import StepDecorator
+from metaflow.plugins.voyager.pipeline.step import ETL
 
 
-class VoyagerStepDecorator(StepDecorator):
+class ETLStepDecorator(StepDecorator):
     """
-    Base class for all step decorators.
+    ETL step decorator.
 
-    Example:
+    How to:
 
-    @my_decorator
+    etl_step = {"branch": "", "parameters": {}}
+    :branch branch or release of the ETL step to be launched
+    :parameters parameters to be passed to the ETL step
+
+    @etl{step=etl_step)
     @step
     def a(self):
         pass
 
-    @my_decorator
-    @step
-    def b(self):
-        pass
-
-    To make the above work, define a subclass
-
-    class MyDecorator(StepDecorator):
-        name = "my_decorator"
-
-    and include it in plugins.STEP_DECORATORS. Now both a() and b()
-    get an instance of MyDecorator, so you can keep step-specific
-    state easily.
     """
 
-    name = "voyager"
+    name = "etl"
+    defaults = {"step": {}}
 
     def task_pre_step(
         self,
@@ -44,8 +37,59 @@ class VoyagerStepDecorator(StepDecorator):
         """
         Run before the step function in the task context.
         """
-        print("LA CONCHA DE TU MADRE ALL BOYS")
+        #  step = self.attributes["step"]
+        #  step = ETL(project=step["project"], branch=step["branch"], parameters=step["parameters"])
+        #  step.launch()
 
-    def task_decorate(self, step_func, flow, graph, retry_count, max_user_code_retries):
-        print(self)
-        return step_func
+    def task_post_step(
+        self, step_name, flow, graph, retry_count, max_user_code_retries
+    ):
+        """
+        Run after the step function has finished successfully in the task
+        context.
+        """
+        step = self.attributes["step"]
+        step = ETL(
+            project=step["project"],
+            branch=step["branch"],
+            parameters=step["parameters"],
+        )
+        return step.launch()
+
+
+class TrainingStepDecorator(StepDecorator):
+    """
+    ETL step decorator.
+
+    How to:
+
+    etl_step = {"branch": "", "parameters": {}}
+    :branch branch or release of the ETL step to be launched
+    :parameters parameters to be passed to the ETL step
+
+    @etl{step=etl_step)
+    @step
+    def a(self):
+        pass
+
+    """
+
+    name = "training"
+    defaults = {"step": {}}
+
+    def task_pre_step(
+        self,
+        step_name,
+        datastore,
+        metadata,
+        run_id,
+        task_id,
+        flow,
+        graph,
+        retry_count,
+        max_user_code_retries,
+    ):
+        """
+        Run before the step function in the task context.
+        """
+        print(self.attributes["step"])

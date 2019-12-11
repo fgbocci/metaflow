@@ -1,4 +1,7 @@
+from io import StringIO
+
 from metaflow import FlowSpec, step, etl, training
+from metaflow.plugins.voyager.pipeline.step import ETL
 
 
 class HelloVoyager(FlowSpec):
@@ -19,19 +22,15 @@ class HelloVoyager(FlowSpec):
         print("HelloFlow is starting.")
         self.next(self.run_etl)
 
-    @etl(
-        step={
-            "project": "fda-voyager",
-            "branch": "dummy",
-            "parameters": {"FOO": "BAR"},
-        },
-    )
     @step
     def run_etl(self):
+        step = ETL(project="fda-voyager", branch="develop", parameters={"foo": "bar"})
+        self.results = step.launch()
         self.next(self.run_fake_training)
 
     @step
     def run_fake_training(self):
+        print(self.results)
         self.next(self.end)
 
     @step
