@@ -25,8 +25,9 @@ class ETL(Step):
 
 
 class Training(Step):
-    def __init__(self, project, branch, parameters):
+    def __init__(self, project, branch, parameters, etl_version):
         super().__init__(project, branch, parameters)
+        self.etl_version = etl_version
 
     def execute(self):
         header = {"x-auth-token": self.config["fury_token"]}

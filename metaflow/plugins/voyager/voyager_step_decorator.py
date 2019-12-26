@@ -1,5 +1,6 @@
 from metaflow.decorators import StepDecorator
-from metaflow.plugins.voyager.pipeline.step import ETL
+from metaflow.plugins.voyager.pipeline.step import ETL, Training
+from metaflow import current
 
 
 class ETLStepDecorator(StepDecorator):
@@ -35,16 +36,6 @@ class ETLStepDecorator(StepDecorator):
         max_user_code_retries,
     ):
         """
-        Run before the step function in the task context.
-        """
-        #  step = self.attributes["step"]
-        #  step = ETL(project=step["project"], branch=step["branch"], parameters=step["parameters"])
-        #  step.launch()
-
-    def task_post_step(
-        self, step_name, flow, graph, retry_count, max_user_code_retries
-    ):
-        """
         Run after the step function has finished successfully in the task
         context.
         """
@@ -54,7 +45,8 @@ class ETLStepDecorator(StepDecorator):
             branch=step["branch"],
             parameters=step["parameters"],
         )
-        return step.launch()
+        current.__dict__ = step.launch()
+        print("Inside ETL current: {}".format(vars(current)))
 
 
 class TrainingStepDecorator(StepDecorator):
@@ -77,19 +69,18 @@ class TrainingStepDecorator(StepDecorator):
     name = "training"
     defaults = {"step": {}}
 
-    def task_pre_step(
-        self,
-        step_name,
-        datastore,
-        metadata,
-        run_id,
-        task_id,
-        flow,
-        graph,
-        retry_count,
-        max_user_code_retries,
+    def task_post_step(
+        self, step_name, flow, graph, retry_count, max_user_code_retries
     ):
         """
-        Run before the step function in the task context.
+        Run after the step function has finished successfully in the task
+        context.
         """
-        print(self.attributes["step"])
+        step = self.attributes["step"]
+        step = Training(
+            project=step["project"],
+            branch=step["branch"],
+            parameters=step["parameters"],
+            etl_version=vars(current)["etl_version"],
+        )
+        vars(current)[current.step_name] = step.launch()

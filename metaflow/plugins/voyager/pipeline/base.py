@@ -22,9 +22,9 @@ class Step:
         return self.__class__.__name__.lower()
 
     def launch(self):
-        # self.execute()
+        #  self.execute()
         #  self.fetch_status()
-        print("Mocked execution")
+        return vars(self)
 
     def fetch_status(self):
         while True:

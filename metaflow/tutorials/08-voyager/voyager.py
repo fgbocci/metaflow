@@ -1,5 +1,7 @@
-from metaflow import FlowSpec, step, etl, training
+from metaflow import FlowSpec, step, current, Task, Step, etl, training
 
+
+import datetime
 
 class HelloVoyager(FlowSpec):
     """
@@ -19,19 +21,26 @@ class HelloVoyager(FlowSpec):
         print("HelloFlow is starting.")
         self.next(self.run_etl)
 
-    @etl(
-        step={
-            "project": "fda-voyager",
-            "branch": "dummy",
-            "parameters": {"FOO": "BAR"},
-        },
-    )
+    @etl(step={
+        "project": "fda-voyager",
+        "branch": "dummy",
+        "parameters": {"FOO": "BAR"},
+    })
     @step
     def run_etl(self):
+        self.an_execution = vars(current)
+        print("Inside {} current: {}".format("run_etl", vars(current)))
+        print("Self an execution: {}".format(self.an_execution))
         self.next(self.run_fake_training)
 
+    @training(step={
+        "project": "fda-voyager",
+        "branch": "dummy",
+        "parameters": {"FOO": "BAR"},
+    })
     @step
     def run_fake_training(self):
+        vars(current)["etl_version"] = self.an_execution["version"]
         self.next(self.end)
 
     @step
